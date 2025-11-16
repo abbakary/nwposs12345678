@@ -714,7 +714,7 @@
       <div class="card shadow-sm mb-4 order-types-card">
         <div class="card-header bg-light d-flex justify-content-between align-items-center">
           <h6 class="mb-0"><i class="fa fa-layer-group me-2"></i>Order Components</h6>
-          {% if order.status != 'completed' and order.status != 'cancelled' %}
+          {% if order.status != 'cancelled' %}
           <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addOrderTypeModal">
             <i class="fa fa-plus me-1"></i>Add Component
           </button>
