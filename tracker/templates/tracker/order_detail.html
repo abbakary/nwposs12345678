@@ -1076,11 +1076,7 @@
           <div class="mb-2 d-flex justify-content-between">
             <div class="text-muted">Estimated Duration</div>
             <div class="fw-medium text-end">
-              {% if order.estimated_duration < 60 %}
-                {{ order.estimated_duration }}m
-              {% else %}
-                {% widthratio order.estimated_duration 60 1 as hours %}{% widthratio order.estimated_duration|add:0 60 1 as total_hours %}{{ hours }}h {% with remaining=order.estimated_duration|add:0 %}{% widthratio remaining 60 1 as h %}{% with mins=remaining %}{{ mins|add:0|add:0|add:0|add:0|add:0|add:0|add:0|add:0|add:0|add:0 }}{% endwith %}{% endwith %}m
-              {% endif %}
+              {{ order.estimated_duration|format_minutes }}
             </div>
           </div>
           {% endif %}
