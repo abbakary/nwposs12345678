@@ -1079,7 +1079,7 @@
               {% if order.estimated_duration < 60 %}
                 {{ order.estimated_duration }}m
               {% else %}
-  
+                {% widthratio order.estimated_duration 60 1 %}h {% widthratio order.estimated_duration 60 1 as hours %}{{ order.estimated_duration|add:"-"|add:hours|mul:60 }}m
               {% endif %}
             </div>
           </div>
