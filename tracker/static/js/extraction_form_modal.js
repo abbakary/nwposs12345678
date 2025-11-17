@@ -99,6 +99,26 @@ class ExtractionFormModal {
     this.formData.customer_type = selectedType;
   }
 
+  handleComponentTypeChange() {
+    const selectedType = document.querySelector('input[name="component_type"]:checked')?.value;
+    const salesItemDetailsWrapper = document.getElementById('salesItemDetailsWrapper');
+
+    if (selectedType === 'sales' && salesItemDetailsWrapper) {
+      salesItemDetailsWrapper.style.display = 'block';
+    } else if (salesItemDetailsWrapper) {
+      salesItemDetailsWrapper.style.display = 'none';
+    }
+  }
+
+  handleAddComponentToggle() {
+    const isChecked = document.getElementById('addComponentCheckbox')?.checked;
+    const wrapper = document.getElementById('componentSelectionWrapper');
+
+    if (wrapper) {
+      wrapper.style.display = isChecked ? 'block' : 'none';
+    }
+  }
+
   nextStep() {
     if (!this.validateStep(this.currentStep)) {
       return;
