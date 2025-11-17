@@ -1251,6 +1251,31 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 
+// Add Item/Service Logic
+document.addEventListener('DOMContentLoaded', function(){
+  const addItemServiceBtn = document.getElementById('addItemServiceBtn');
+  if (addItemServiceBtn) {
+    addItemServiceBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      if (typeof window.extractionFormModal !== 'undefined' && window.extractionFormModal) {
+        // Open the extraction modal
+        window.extractionFormModal.open();
+        // Skip to step 3 (Add Another Item/Service) directly
+        setTimeout(function() {
+          window.extractionFormModal.showStep(3);
+        }, 300);
+      } else {
+        // Fallback: show extraction modal manually
+        const modalEl = document.getElementById('extractionFormModal');
+        if (modalEl) {
+          const modal = new bootstrap.Modal(modalEl);
+          modal.show();
+        }
+      }
+    });
+  }
+});
+
 // Complete Order Logic
 document.addEventListener('DOMContentLoaded', function(){
   const completeBtn = document.getElementById('completeOrderBtn');
