@@ -228,16 +228,6 @@
                 </select>
               </div>
               <div class="col-xl-2 col-lg-4 col-md-6">
-                <label class="form-label fw-medium">Priority</label>
-                <select name="priority" class="form-select">
-                  <option value="">Any</option>
-                  <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>Low</option>
-                  <option value="medium" {% if request.GET.priority == 'medium' %}selected{% endif %}>Medium</option>
-                  <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>High</option>
-                  <option value="urgent" {% if request.GET.priority == 'urgent' %}selected{% endif %}>Urgent</option>
-                </select>
-              </div>
-              <div class="col-xl-2 col-lg-4 col-md-6">
                 <label class="form-label fw-medium">Date Range</label>
                 <select name="date_range" class="form-select">
                   {% with dr=request.GET.date_range|default:'' %}
