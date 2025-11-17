@@ -215,6 +215,8 @@ class ExtractionFormModal {
       case 2:
         return true; // Services are optional
       case 3:
+        return true; // Add another item/service is optional
+      case 4:
         return this.validateExtractedData();
       default:
         return true;
