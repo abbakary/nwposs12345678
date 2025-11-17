@@ -8,7 +8,7 @@ class ExtractionFormModal {
     this.orderType = orderType;
     this.orderId = orderId;
     this.currentStep = 1;
-    this.totalSteps = 3;
+    this.totalSteps = 4;
     this.formData = {};
     this.modal = null;
     this.isCustomerPreSelected = false;
@@ -52,6 +52,17 @@ class ExtractionFormModal {
       input.addEventListener('change', () => self.handleCustomerTypeChange());
     });
 
+    // Component type selection (for adding another item/service)
+    document.querySelectorAll('input[name="component_type"]').forEach(input => {
+      input.addEventListener('change', () => self.handleComponentTypeChange());
+    });
+
+    // Add component checkbox
+    const addComponentCheckbox = document.getElementById('addComponentCheckbox');
+    if (addComponentCheckbox) {
+      addComponentCheckbox.addEventListener('change', () => self.handleAddComponentToggle());
+    }
+
     // Step navigation
     document.getElementById('extractionNextBtn').addEventListener('click', () => self.nextStep());
     document.getElementById('extractionPrevBtn').addEventListener('click', () => self.prevStep());
@@ -86,6 +97,26 @@ class ExtractionFormModal {
     }
 
     this.formData.customer_type = selectedType;
+  }
+
+  handleComponentTypeChange() {
+    const selectedType = document.querySelector('input[name="component_type"]:checked')?.value;
+    const salesItemDetailsWrapper = document.getElementById('salesItemDetailsWrapper');
+
+    if (selectedType === 'sales' && salesItemDetailsWrapper) {
+      salesItemDetailsWrapper.style.display = 'block';
+    } else if (salesItemDetailsWrapper) {
+      salesItemDetailsWrapper.style.display = 'none';
+    }
+  }
+
+  handleAddComponentToggle() {
+    const isChecked = document.getElementById('addComponentCheckbox')?.checked;
+    const wrapper = document.getElementById('componentSelectionWrapper');
+
+    if (wrapper) {
+      wrapper.style.display = isChecked ? 'block' : 'none';
+    }
   }
 
   nextStep() {
@@ -134,7 +165,7 @@ class ExtractionFormModal {
     }
 
     prevBtn.style.display = actualStep === 1 || actualStep === 2 ? 'none' : 'block';
-    nextBtn.style.display = actualStep >= (this.isCustomerPreSelected ? 2 : this.totalSteps) ? 'none' : 'block';
+    nextBtn.style.display = actualStep >= this.totalSteps ? 'none' : 'block';
     submitBtn.style.display = actualStep === this.totalSteps ? 'block' : 'none';
 
     this.currentStep = actualStep;
@@ -215,6 +246,8 @@ class ExtractionFormModal {
       case 2:
         return true; // Services are optional
       case 3:
+        return true; // Add another item/service is optional
+      case 4:
         return this.validateExtractedData();
       default:
         return true;
