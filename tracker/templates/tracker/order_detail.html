@@ -4138,6 +4138,199 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  // ============================================================================
+  // FILE UPLOAD AND DOCUMENT PREVIEW FUNCTIONALITY
+  // ============================================================================
+  (function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('attachmentsInput');
+    const filePreviewContainer = document.getElementById('filePreviewContainer');
+    const selectedFilesDiv = document.getElementById('selectedFiles');
+    const uploadBtn = document.getElementById('uploadFilesBtn');
+    let selectedFiles = [];
+
+    if (dropZone && fileInput) {
+      dropZone.addEventListener('click', () => fileInput.click());
+
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '#e9ecef';
+        dropZone.style.borderColor = '#0d6efd';
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.style.backgroundColor = '';
+        dropZone.style.borderColor = '#dee2e6';
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.backgroundColor = '';
+        dropZone.style.borderColor = '#dee2e6';
+        const files = e.dataTransfer.files;
+        fileInput.files = files;
+        updateFilePreview(files);
+      });
+
+      fileInput.addEventListener('change', () => {
+        updateFilePreview(fileInput.files);
+      });
+    }
+
+    function updateFilePreview(files) {
+      selectedFiles = Array.from(files);
+      selectedFilesDiv.innerHTML = '';
+      filePreviewContainer.innerHTML = '';
+      uploadBtn.disabled = selectedFiles.length === 0;
+
+      if (selectedFiles.length === 0) {
+        filePreviewContainer.innerHTML = '<div class="text-center text-muted"><i class="fa fa-images fa-3x mb-3 d-block opacity-50"></i><small>Selected files will appear here</small></div>';
+        return;
+      }
+
+      selectedFilesDiv.innerHTML = '<h6 class="text-muted mb-2"><i class="fa fa-file-check me-2 text-success"></i>Selected Files (' + selectedFiles.length + ')</h6>';
+      let previewHTML = '';
+
+      selectedFiles.forEach((file, index) => {
+        const fileName = file.name;
+        const fileSize = (file.size / 1024).toFixed(2);
+        const isImage = file.type.startsWith('image/');
+        const isPdf = file.type === 'application/pdf';
+
+        selectedFilesDiv.innerHTML += `
+          <div class="d-flex align-items-center justify-content-between mb-2 p-2 border rounded" style="background-color: #f8f9fa;">
+            <div class="d-flex align-items-center flex-grow-1">
+              <i class="fa fa-check-circle text-success me-2"></i>
+              <div>
+                <small class="d-block fw-medium">${fileName}</small>
+                <small class="text-muted">${fileSize} KB</small>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (isImage) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewHTML += `
+              <div class="mb-3">
+                <small class="text-muted d-block mb-2">${fileName}</small>
+                <img src="${e.target.result}" alt="${fileName}" style="max-width: 100%; max-height: 150px; border-radius: 4px; border: 1px solid #dee2e6;">
+              </div>
+            `;
+            filePreviewContainer.innerHTML = previewHTML;
+          };
+          reader.readAsDataURL(file);
+        } else if (isPdf) {
+          previewHTML += `
+            <div class="mb-3">
+              <small class="text-muted d-block mb-2">${fileName}</small>
+              <div class="text-center p-3 border rounded" style="background-color: #f8f9fa;">
+                <i class="fa fa-file-pdf text-danger fa-3x"></i>
+                <small class="d-block text-muted mt-2">PDF file: ${fileName}</small>
+              </div>
+            </div>
+          `;
+          filePreviewContainer.innerHTML = previewHTML;
+        } else {
+          previewHTML += `
+            <div class="mb-3">
+              <small class="text-muted d-block mb-2">${fileName}</small>
+              <div class="text-center p-3 border rounded" style="background-color: #f8f9fa;">
+                <i class="fa fa-file text-muted fa-3x"></i>
+                <small class="d-block text-muted mt-2">${fileName}</small>
+              </div>
+            </div>
+          `;
+          filePreviewContainer.innerHTML = previewHTML;
+        }
+      });
+    }
+  })();
+
+  // ============================================================================
+  // DOCUMENT SELECTION AND SIGNATURE MODAL FUNCTIONALITY
+  // ============================================================================
+  (function() {
+    // Main signature modal document selection
+    const docSelectors = document.querySelectorAll('.doc-selector');
+    const selectedDocInfo = document.getElementById('selectedDocInfo');
+    const selectedDocName = document.getElementById('selectedDocName');
+    const selectedDocumentInput = document.getElementById('selectedDocumentInput');
+    const docPreviewSection = document.getElementById('existingDocPreviewSection');
+
+    docSelectors.forEach(selector => {
+      selector.addEventListener('change', function() {
+        if (this.checked && selectedDocumentInput) {
+          selectedDocumentInput.value = this.value;
+          if (selectedDocInfo && selectedDocName) {
+            selectedDocName.textContent = this.dataset.docName || 'Selected Document';
+            selectedDocInfo.style.display = 'block';
+          }
+        }
+      });
+    });
+
+    // Supporting documents modal document selection
+    const existingDocSelectors = document.querySelectorAll('.existing-doc-selector');
+    const existingSelectedDocInfo = document.getElementById('existingSelectedDocInfo');
+    const existingSelectedDocName = document.getElementById('existingSelectedDocName');
+    const signExistingAttachmentId = document.getElementById('signExistingAttachmentId');
+    const signExistingFileName = document.getElementById('signExistingFileName');
+
+    existingDocSelectors.forEach(selector => {
+      selector.addEventListener('change', function() {
+        if (this.checked) {
+          if (signExistingAttachmentId) signExistingAttachmentId.value = this.dataset.attachmentId || '';
+          if (signExistingFileName) signExistingFileName.value = this.dataset.docName || '';
+          if (existingSelectedDocInfo && existingSelectedDocName) {
+            existingSelectedDocName.textContent = this.dataset.docName || 'Selected Document';
+            existingSelectedDocInfo.style.display = 'block';
+          }
+        }
+      });
+    });
+
+    // Make footer buttons trigger their respective form submissions
+    const footerSignAndComplete = document.getElementById('footerSignAndComplete');
+    if (footerSignAndComplete) {
+      footerSignAndComplete.addEventListener('click', function(e) {
+        e.preventDefault();
+        const completeForm = document.getElementById('completeForm');
+        const sigDataInput = document.getElementById('signatureDataInput');
+        const signaturePad = document.getElementById('signaturePad');
+
+        if (signaturePad && sigDataInput) {
+          const signatureDataUrl = signaturePad.toDataURL('image/png', 0.8);
+          sigDataInput.value = signatureDataUrl;
+        }
+
+        if (completeForm) {
+          completeForm.submit();
+        }
+      });
+    }
+
+    const footerSignExistingDoc = document.getElementById('footerSignExistingDoc');
+    if (footerSignExistingDoc) {
+      footerSignExistingDoc.addEventListener('click', function(e) {
+        e.preventDefault();
+        const signExistingForm = document.getElementById('signExistingForm');
+        const signExistingSignatureData = document.getElementById('signExistingSignatureData');
+        const existingDocSignaturePad = document.getElementById('existingDocSignaturePad');
+
+        if (existingDocSignaturePad && signExistingSignatureData) {
+          const signatureDataUrl = existingDocSignaturePad.toDataURL('image/png', 0.8);
+          signExistingSignatureData.value = signatureDataUrl;
+        }
+
+        if (signExistingForm) {
+          signExistingForm.submit();
+        }
+      });
+    }
+  })();
+
   // Initialize everything when DOM is loaded
   document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded - initializing components');
