@@ -449,10 +449,70 @@
   overflow-y: auto;
 }
 
+/* Component Type Selection Styles */
+.component-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.component-type-card {
+  cursor: pointer;
+  margin: 0;
+}
+
+.component-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  text-align: center;
+  background: white;
+  min-height: 100px;
+}
+
+.component-type-card input[type="radio"]:checked + .component-card-content {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2f7 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.component-type-card:hover .component-card-content {
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+/* Add Component Section */
+.add-component-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.form-check-lg .form-check-input {
+  width: 1.25em;
+  height: 1.25em;
+  margin-top: 0.2em;
+}
+
+.form-check-lg .form-check-label {
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
 /* Responsive */
 @media (max-width: 576px) {
   .customer-type-grid-extraction {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .component-type-grid {
+    grid-template-columns: 1fr;
   }
 
   .modal-dialog {
